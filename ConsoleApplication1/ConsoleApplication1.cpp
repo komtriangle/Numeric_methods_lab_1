@@ -74,12 +74,29 @@
 {
   return 0.5 *abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
 }
+
+ std::pair<double, double> MinValuesfAndg()
+ {
+   double val0 = abs(f(X0, Y0)) + abs(g(X0, Y0));
+   double val1 = abs(f(X1, Y1)) + abs(g(X1, Y1));
+   double val2 = abs(f(X2, Y2)) + abs(g(X2, Y2));
+
+   if (val0 < val1 && val0 < val2)
+     return std::pair<double, double>(X0, Y0);
+   if (val1 < val2)
+     return std::pair<double, double>(X1, Y1);
+   else
+     return std::pair<double, double>(X2, Y2);
+
+ }
+
  void TwoDemetnialLinearInterpolation(double(*f)(double, double), double(*g)(double, double), double epsilon)
 {
   double x = 10, y = 10;
   double xls = 100000;
   double yls = 100000;
   double dv = abs(x - xls) + abs(y - yls);
+
   while (dv > epsilon)
   {
     double zf0 = f(X0, Y0);
@@ -119,6 +136,8 @@
     double s1 = stri(X0, Y0, X2, Y2, x, y);
     double s2 = stri(X0, Y0, X1, Y1, x, y);
 
+
+
     if (s0 >= s1 && s0 >= s2)
     {
       X0 = X1;
@@ -127,39 +146,26 @@
       Y1 = Y2;
       X2 = x;
       Y2 = y;
-      continue;
     }
-    if (s1 >= s0 && s1 >= s2)
+    else if (s1 >= s0 && s1 >= s2)
     {
       X1 = X2;
       Y1 = Y2;
       X2 = x;
       Y2 = y;
-      continue;
     }
-    if (s2 >= s0 && s2 >= s1)
+    else  if (s2 >= s0 && s2 >= s1)
     {
       X2 = x;
       Y2 = y;
-      continue;
     }
+    std::pair<double, double> point = MinValuesfAndg();
+    std::cout << "x:" << point.first << ", y: " << point.second << " f(x,y): " << f(point.first, point.second) << " g(x,y): " << g(point.first, point.second) << std::endl;
+
   }
 
 }
- std::pair<double, double> MinValuesfAndg()
-{
-  double val0 = abs(f(X0, Y0)) + abs(g(X0, Y0));
-  double val1 = abs(f(X1, Y1)) + abs(g(X1, Y1));
-  double val2 = abs(f(X2, Y2)) + abs(g(X2, Y2));
 
-  if (val0 < val1 && val0 < val2)
-    return std::pair<double, double>(X0, Y0);
-  if (val1 < val2)
-    return std::pair<double, double>(X1, Y1);
-  else
-    return std::pair<double, double>(X2, Y2);
-
-}
 
  void Solve(double xp0, double yp1, double xp1, double yp2, double xp2, double yp3, double xp3, double yp4, double(*f)(double, double), double(*g)(double, double), double epsilon) {
    
@@ -174,12 +180,7 @@
    X2 = point3.first;
    Y2 = point3.second;
 
-   for (int i = 0; i < 10; i++)
-   {
-     TwoDemetnialLinearInterpolation(f, g, epsilon);
-     std::pair<double, double> point = MinValuesfAndg();
-     std::cout << "x:" << point.first << ", y: " << point.second << " f(x,y): " << f(point.first, point.second) << " g(x,y): " << g(point.first, point.second) << std::endl;
-   }
+  TwoDemetnialLinearInterpolation(f, g, epsilon);
    std::cout << std::endl;
  }
 
