@@ -74,13 +74,13 @@
 {
   return 0.5 *abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
 }
- void TwoDemetnialLinearInterpolation(double(*f)(double, double), double(*g)(double, double))
+ void TwoDemetnialLinearInterpolation(double(*f)(double, double), double(*g)(double, double), double epsilon)
 {
   double x = 10, y = 10;
   double xls = 100000;
   double yls = 100000;
   double dv = abs(x - xls) + abs(y - yls);
-  while (dv > 0.0000005)
+  while (dv > epsilon)
   {
     double zf0 = f(X0, Y0);
     double zg0 = g(X0, Y0);
@@ -161,8 +161,9 @@
 
 }
 
- void Solve(double xp0, double yp1, double xp1, double yp2, double xp2, double yp3, double xp3, double yp4, double(*f)(double, double), double(*g)(double, double)) {
+ void Solve(double xp0, double yp1, double xp1, double yp2, double xp2, double yp3, double xp3, double yp4, double(*f)(double, double), double(*g)(double, double), double epsilon) {
    
+
    std::pair<double, double> point1 = InitialPointChoice(xp0, yp1, xp2, yp3, 1);
    std::pair<double, double> point2 = InitialPointChoice(xp0, yp1, xp2, yp3, 2);
    std::pair<double, double> point3 = InitialPointChoice(xp0, yp1, xp2, yp3, 3);
@@ -175,7 +176,7 @@
 
    for (int i = 0; i < 10; i++)
    {
-     TwoDemetnialLinearInterpolation(f, g);
+     TwoDemetnialLinearInterpolation(f, g, epsilon);
      std::pair<double, double> point = MinValuesfAndg();
      std::cout << "x:" << point.first << ", y: " << point.second << " f(x,y): " << f(point.first, point.second) << " g(x,y): " << g(point.first, point.second) << std::endl;
    }
@@ -185,6 +186,7 @@
 int main()
 {
   
+  double epsilon = 0.0000005;
   double const PI = 3.1415926535;
   double xp0 = 0, yp1 = 0;
   double xp1 = 0, yp2 = 5;
@@ -192,7 +194,7 @@ int main()
   double xp3 = PI / 2, yp4 = 0;
   std::cout << "f(x,y) = tan(x) - y; g(x,y) = x*y - 1.5;" << std::endl;
 
-  Solve(xp0, yp1, xp1, yp2, xp2, yp3, xp3, yp4, f, g);
+  Solve(xp0, yp1, xp1, yp2, xp2, yp3, xp3, yp4, f, g, epsilon);
 
 
   xp0 = 0, yp1 = 0;
@@ -201,7 +203,7 @@ int main()
   xp3 = 5, yp4 = 0;
 
   std::cout << "f(x,y) = sin(x) + cos(x); g(x,y) = 3*x;" << std::endl;
-  Solve(xp0, yp1, xp1, yp2, xp2, yp3, xp3, yp4, f1, g1);
+  Solve(xp0, yp1, xp1, yp2, xp2, yp3, xp3, yp4, f1, g1, epsilon);
   int a;
   std::cin >>a;
 
