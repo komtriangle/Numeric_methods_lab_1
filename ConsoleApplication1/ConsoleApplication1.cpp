@@ -2,37 +2,37 @@
 #include <cmath>
 
 
- double X0=0, Y0=0, X1=0, Y1=0, X2=0, Y2=0;
- double f(double x, double y)
+float X0=0, Y0=0, X1=0, Y1=0, X2=0, Y2=0;
+float f0(float x, float y)
  {
    return tan(x) - y;
  }
- double g(double x, double y)
+float g0(float x, float y)
  {
    return x*y-1.5;
  }
 
- double f1(double x, double y)
+ float f1(float x, float y)
 {
    return sin(x) + cos(x)-y;
 }
- double g1(double x, double y)
+ float g1(float x, float y)
 {
    return 3 * x-y;
 }
- std::pair<double, double> InitialPointChoice(double Xm, double Ym, double Xp, double Yp, int area)
+ std::pair<float, float> InitialPointChoice(float(*f)(float, float), float(*g)(float, float), float Xm, float Ym, float Xp, float Yp, int area)
 {
-  std::pair<double, double> point = std::pair<double, double>(0.0, 0.0);
-  double dl = 0.1;
-  double curmin = 100000;
+  std::pair<float, float> point = std::pair<float, float>(0.0, 0.0);
+  float dl = 0.1;
+  float curmin = 1000000;
   while (curmin > 99999)
   {
-    for (double x = Xm; x < Xp; x += dl)
+    for (float x = Xm; x < Xp; x += dl)
     {
-      for (double y = Ym; y < Yp; y += dl)
+      for (float y = Ym; y < Yp; y += dl)
       {
-        double fc = f(x, y);
-        double gc = g(x, y);
+        float fc = f(x, y);
+        float gc = g(x, y);
         switch (area)
         {
         case 1:
@@ -54,7 +54,7 @@
         default:
           break;
         }
-        double dv = abs(fc) + abs(gc);
+        float dv = abs(fc) + abs(gc);
         if (dv > curmin)
           continue;
         point.first = x;
@@ -70,71 +70,71 @@
   }
   return point;
 }
- double stri(double x1, double y1, double x2, double y2, double x3, double y3)
+ double stri(float x1, float y1, float x2, float y2, float x3, float y3)
 {
   return 0.5 *abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
 }
 
- std::pair<double, double> MinValuesfAndg()
+ std::pair<float, float> MinValuesfAndg(float(*f)(float, float), float(*g)(float, float))
  {
-   double val0 = abs(f(X0, Y0)) + abs(g(X0, Y0));
-   double val1 = abs(f(X1, Y1)) + abs(g(X1, Y1));
-   double val2 = abs(f(X2, Y2)) + abs(g(X2, Y2));
+   float val0 = abs(f(X0, Y0)) + abs(g(X0, Y0));
+   float val1 = abs(f(X1, Y1)) + abs(g(X1, Y1));
+   float val2 = abs(f(X2, Y2)) + abs(g(X2, Y2));
 
    if (val0 < val1 && val0 < val2)
-     return std::pair<double, double>(X0, Y0);
+     return std::pair<float, float>(X0, Y0);
    if (val1 < val2)
-     return std::pair<double, double>(X1, Y1);
+     return std::pair<float, float>(X1, Y1);
    else
-     return std::pair<double, double>(X2, Y2);
+     return std::pair<float, float>(X2, Y2);
 
  }
 
- void TwoDemetnialLinearInterpolation(double(*f)(double, double), double(*g)(double, double), double epsilon)
+ void TwoDemetnialLinearInterpolation(float(*f)(float, float), float(*g)(float, float), float epsilon)
 {
-  double x = 10, y = 10;
-  double xls = 100000;
-  double yls = 100000;
-  double dv = abs(x - xls) + abs(y - yls);
+   float x = 10, y = 10;
+   float xls = 1000000;
+   float yls = 1000000;
+   float dv = abs(x - xls) + abs(y - yls);
 
   while (dv > epsilon)
   {
-    double zf0 = f(X0, Y0);
-    double zg0 = g(X0, Y0);
+    float zf0 = f(X0, Y0);
+    float zg0 = g(X0, Y0);
 
-    double zf1 = f(X1, Y1);
-    double zg1 = g(X1, Y1);
+    float zf1 = f(X1, Y1);
+    float zg1 = g(X1, Y1);
 
-    double zf2 = f(X2, Y2);
-    double zg2 = g(X2, Y2);
+    float zf2 = f(X2, Y2);
+    float zg2 = g(X2, Y2);
 
-    double Af = (Y1 - Y0) * (zf2 - zf0) - (Y2 - Y0) * (zf1 - zf0);
-    double Bf = (X2 - X0) * (zf1 - zf0) - (X1 - X0) * (zf2 - zf0);
-    double Cf = (X1 - X0) * (Y2 - Y0) - (X2 - X0) * (Y1 - Y0);
-    double Df = -1 * X0 * Af - Y0 * Bf - zf0 * Cf;
+    float Af = (Y1 - Y0) * (zf2 - zf0) - (Y2 - Y0) * (zf1 - zf0);
+    float Bf = (X2 - X0) * (zf1 - zf0) - (X1 - X0) * (zf2 - zf0);
+    float Cf = (X1 - X0) * (Y2 - Y0) - (X2 - X0) * (Y1 - Y0);
+    float Df = -1 * X0 * Af - Y0 * Bf - zf0 * Cf;
 
-    double Ag = (Y1 - Y0) * (zg2 - zg0) - (X2 - Y0) * (zg1 - zg0);
-    double Bg = (X2 - X0) * (zg1 - zg0) - (X1 - X0) * (zg2 - zg0);
-    double Cg = (X1 - X0) * (Y2 - Y0) - (X2 - X0) * (Y1 - Y0);
-    double Dg = -1 * X0 * Ag - Y0 * Bg - zg0 * Cg;
+    float Ag = (Y1 - Y0) * (zg2 - zg0) - (Y2 - Y0) * (zg1 - zg0);
+    float Bg = (X2 - X0) * (zg1 - zg0) - (X1 - X0) * (zg2 - zg0);
+    float Cg = (X1 - X0) * (Y2 - Y0) - (X2 - X0) * (Y1 - Y0);
+    float Dg = -1 * X0 * Ag - Y0 * Bg - zg0 * Cg;
 
-    double dt = Af * Bg - Ag * Bf;
+    float dt = Af * Bg - Ag * Bf;
     if (abs(dt) < 0.000001)
       break;
     x = (-1 * Df * Bg + Dg * Bf) / dt;
     y = (-1 * Af * Dg + Ag * Df) / dt;
 
-    double zfc = f(x, y);
-    double zgc = g(x, y);
+    float zfc = f(x, y);
+    float zgc = g(x, y);
 
     dv = abs(x - xls) + abs(y - yls);
 
     xls = x;
     yls = y;
 
-    double s0 = stri(X1, Y1, X2, Y2, x, y);
-    double s1 = stri(X0, Y0, X2, Y2, x, y);
-    double s2 = stri(X0, Y0, X1, Y1, x, y);
+    float s0 = stri(X1, Y1, X2, Y2, x, y);
+    float s1 = stri(X0, Y0, X2, Y2, x, y);
+    float s2 = stri(X0, Y0, X1, Y1, x, y);
 
 
 
@@ -159,20 +159,22 @@
       X2 = x;
       Y2 = y;
     }
-    std::pair<double, double> point = MinValuesfAndg();
+    std::pair<float, float> point = MinValuesfAndg(f,g);
     std::cout << "x:" << point.first << ", y: " << point.second << " f(x,y): " << f(point.first, point.second) << " g(x,y): " << g(point.first, point.second) << std::endl;
 
   }
+  std::pair<float, float> point = MinValuesfAndg(f,g);
+  std::cout << "x:" << point.first << ", y: " << point.second << " f(x,y): " << f(point.first, point.second) << " g(x,y): " << g(point.first, point.second) << std::endl;
 
 }
 
 
- void Solve(double xp0, double yp1, double xp1, double yp2, double xp2, double yp3, double xp3, double yp4, double(*f)(double, double), double(*g)(double, double), double epsilon) {
+ void Solve(float xp0, float yp1, float xp1, float yp2, float xp2, float yp3, float xp3, float yp4, float(*f)(float, float), float(*g)(float, float), float epsilon) {
    
 
-   std::pair<double, double> point1 = InitialPointChoice(xp0, yp1, xp2, yp3, 1);
-   std::pair<double, double> point2 = InitialPointChoice(xp0, yp1, xp2, yp3, 2);
-   std::pair<double, double> point3 = InitialPointChoice(xp0, yp1, xp2, yp3, 3);
+   std::pair<float, float> point1 = InitialPointChoice(f,g,xp0, yp1, xp2, yp3, 1);
+   std::pair<float, float> point2 = InitialPointChoice(f,g,xp0, yp1, xp2, yp3, 2);
+   std::pair<float, float> point3 = InitialPointChoice(f,g,xp0, yp1, xp2, yp3, 3);
    X0 = point1.first;
    Y0 = point1.first;
    X1 = point2.first;
@@ -187,15 +189,15 @@
 int main()
 {
   
-  double epsilon = 0.0000005;
-  double const PI = 3.1415926535;
-  double xp0 = 0, yp1 = 0;
-  double xp1 = 0, yp2 = 5;
-  double xp2 = PI / 2, yp3 = 5;
-  double xp3 = PI / 2, yp4 = 0;
+  float epsilon = 0.0000005;
+  float const PI = 3.1415926535;
+  float xp0 = 0, yp1 = 0;
+  float xp1 = 0, yp2 = 5;
+  float xp2 = PI / 2, yp3 = 5;
+  float xp3 = PI / 2, yp4 = 0;
   std::cout << "f(x,y) = tan(x) - y; g(x,y) = x*y - 1.5;" << std::endl;
 
-  Solve(xp0, yp1, xp1, yp2, xp2, yp3, xp3, yp4, f, g, epsilon);
+  Solve(xp0, yp1, xp1, yp2, xp2, yp3, xp3, yp4, f0, g0, epsilon);
 
 
   xp0 = 0, yp1 = 0;
